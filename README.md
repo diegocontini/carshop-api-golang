@@ -2,7 +2,7 @@
 
 Port em Go do `../CarShopApi` (C# / .NET 8). Mesmo contrato HTTP, qualidade melhor.
 
-Stack: `gin` (HTTP) + `pgx/v5` + `sqlc` (banco) + `goose` (migrations) + JWT HS256 + bcrypt. Dinheiro em `shopspring/decimal`.
+Stack: `gin` (HTTP) + `pgx/v5` + `sqlc` (banco, queries em `src/infra/queries/`) + `goose` (migrations) + JWT HS256 + bcrypt. Dinheiro em `shopspring/decimal`.
 
 Documentacao complementar:
 - `docs/routes.md` — contrato HTTP (fonte da verdade).
@@ -130,7 +130,7 @@ Os comandos acima precisam de `DATABASE_URL` exportado e do binario do `goose` n
 
 ## Geracao de codigo (sqlc)
 
-Depois de editar arquivos em `queries/`:
+Depois de editar arquivos em `src/infra/queries/`:
 
 ```bash
 make sqlc            # roda `sqlc generate`

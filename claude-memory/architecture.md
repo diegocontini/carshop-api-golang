@@ -31,7 +31,7 @@ If you find yourself importing `sqlc` from a controller, stop. Put the call behi
 ## Files per aggregate
 
 For each aggregate (User, Car, Order, Comission) there is exactly one file in:
-- `queries/<name>.sql` (input to sqlc)
+- `src/infra/queries/<name>.sql` (input to sqlc)
 - `src/infra/sqlc/<name>.sql.go` (generated)
 - `src/service/<name>_service.go` (business rules)
 - `src/controller/<name>_controller.go` (HTTP)
@@ -52,3 +52,10 @@ Writes that span multiple tables (order + items + commission, car + images) wrap
 ## Embedded migrations
 
 `migrations/` lives at the module root because Go `//go:embed` cannot reference paths above the source file. The embed.FS lives in `embed.go` at the module root (package `carshop`) and is passed into `db.Migrate` from `server/main.go`. The Makefile's `migrate-up` target uses the same `migrations/` folder via the `goose` CLI, so dev workflow and prod runtime agree.
+
+## sqlc input vs output
+
+- Input SQL lives in `src/infra/queries/<aggregate>.sql` (hand-written).
+- Generated Go lives in `src/infra/sqlc/` (do not hand-edit).
+
+Both are inside `src/infra/` because both are infrastructure concerns. They are kept in sibling folders rather than nested so the path of generated code stays short and the input/output split is visible at a glance.

@@ -21,7 +21,7 @@ Nao havia restricao no banco impedindo as duplicatas - `vendor_comissions.order_
 Duas camadas:
 
 1. **Schema** (`migrations/00001_init.sql`): `vendor_comissions.order_id` e `UNIQUE` com `REFERENCES orders(id) ON DELETE CASCADE`. O banco agora impoe o invariante.
-2. **Service** (`src/service/order_service.go` `upsertCommission`): a escrita da comissao usa `UpsertComissionByOrder` (`queries/comissions.sql`), que faz `INSERT ... ON CONFLICT (order_id) DO UPDATE SET ...`. Toda a escrita do pedido ocorre dentro de uma unica transacao `pgx.BeginFunc`.
+2. **Service** (`src/service/order_service.go` `upsertCommission`): a escrita da comissao usa `UpsertComissionByOrder` (`src/infra/queries/comissions.sql`), que faz `INSERT ... ON CONFLICT (order_id) DO UPDATE SET ...`. Toda a escrita do pedido ocorre dentro de uma unica transacao `pgx.BeginFunc`.
 
 O CASCADE em `order_id` tambem elimina o `_db.VendorComissions.RemoveRange(...)` manual que o `DeleteAsync` do C# precisava executar.
 

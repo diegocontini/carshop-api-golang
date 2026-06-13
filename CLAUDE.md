@@ -4,7 +4,7 @@ Port em Go do `../CarShopApi` (C# / .NET 8). Mesmo contrato HTTP, qualidade melh
 
 ## Stack
 - HTTP: `gin`
-- Banco: `pgx/v5` + `sqlc` (queries em `/queries`, código gerado em `src/infra/sqlc`)
+- Banco: `pgx/v5` + `sqlc` (queries em `src/infra/queries`, código gerado em `src/infra/sqlc`)
 - Migrations: `goose` (SQL em `/migrations`, aplicado no boot a partir do `main`)
 - Auth: JWT HS256 + senhas com bcrypt
 - Dinheiro: `shopspring/decimal` (nada de `float` para valores monetarios)
@@ -17,9 +17,9 @@ src/controller/   handlers gin, DTOs, middleware
 src/service/      regras de negocio (um arquivo por agregado)
 src/domain/       entidades puras + invariantes
 src/infra/db/     pool pgx + runner do goose
+src/infra/queries/ arquivos .sql de entrada do sqlc
 src/infra/sqlc/   queries geradas (NAO editar a mao)
 migrations/       arquivos .sql do goose
-queries/          arquivos .sql de entrada do sqlc
 tests/            integration (testcontainers) + unit
 docs/             contrato HTTP (routes.md)
 claude-memory/    contexto transversal (leia antes de qualquer tarefa nao trivial)
@@ -31,7 +31,7 @@ Direcao de dependencia: `controller -> service -> domain` e `service -> infra/sq
 ## Comandos
 - `make run` — dev local (precisa de `.env` + Postgres rodando)
 - `make test` — unit + integration
-- `make sqlc` — regerar codigo das queries (depois de editar `/queries`)
+- `make sqlc` — regerar codigo das queries (depois de editar `src/infra/queries/`)
 - `make docker-up` / `make docker-down` — stack completa via compose
 
 ## Leia antes de trabalhar

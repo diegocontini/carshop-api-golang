@@ -27,7 +27,7 @@ Dois problemas combinados:
 Duas camadas:
 
 1. **Schema** (`migrations/00001_init.sql`): `users.username TEXT NOT NULL UNIQUE`.
-2. **Query** (`queries/users.sql` `SeedAdmin`):
+2. **Query** (`src/infra/queries/users.sql` `SeedAdmin`):
 
 ```sql
 INSERT INTO users (username, password, email, comission_per_sale_in_percent, role)
