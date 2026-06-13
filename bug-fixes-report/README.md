@@ -1,24 +1,24 @@
 # bug-fixes-report
 
-One file per bug or smell present in the C# `CarShopApi` that the Go port fixes. Each file follows the same template:
+Um arquivo por bug ou cheiro de codigo presente no `CarShopApi` (C#) que o port em Go corrigiu. Cada arquivo segue o mesmo template:
 
 ```
 # NNN — <slug>
 
-## Symptom
-What goes wrong, from the user's point of view.
+## Sintoma
+O que da errado do ponto de vista do usuario.
 
-## Root cause (C#)
-File + line reference into `CarShopApi/`, brief explanation.
+## Causa raiz (C#)
+Referencia para o arquivo + linha em `CarShopApi/`, explicacao breve.
 
-## Fix (Go)
-What the Go code does instead, with file references into `carshop-api-golang/`.
+## Correcao (Go)
+O que o codigo em Go faz no lugar, com referencias para arquivos em `carshop-api-golang/`.
 
-## Verification
-How we know the fix works (integration test name, manual repro, etc.).
+## Verificacao
+Como sabemos que a correcao funciona (nome do teste de integracao, repro manual, etc.).
 ```
 
-Index:
+Indice:
 
 - [001-duplicate-commission-on-order-update.md](001-duplicate-commission-on-order-update.md)
 - [002-n-plus-one-on-image-upsert.md](002-n-plus-one-on-image-upsert.md)

@@ -1,40 +1,40 @@
 # carshop-api-golang
 
-Go port of `../CarShopApi` (C# / .NET 8). Same HTTP contract, better quality.
+Port em Go do `../CarShopApi` (C# / .NET 8). Mesmo contrato HTTP, qualidade melhor.
 
 ## Stack
 - HTTP: `gin`
-- DB: `pgx/v5` + `sqlc` (queries in `/queries`, generated code in `src/infra/sqlc`)
-- Migrations: `goose` (SQL in `/migrations`, applied on boot from `main`)
-- Auth: JWT HS256 + bcrypt passwords
-- Money: `shopspring/decimal` (no float for money)
+- Banco: `pgx/v5` + `sqlc` (queries em `/queries`, código gerado em `src/infra/sqlc`)
+- Migrations: `goose` (SQL em `/migrations`, aplicado no boot a partir do `main`)
+- Auth: JWT HS256 + senhas com bcrypt
+- Dinheiro: `shopspring/decimal` (nada de `float` para valores monetarios)
 
 ## Layout
 ```
-server/           entrypoint
-src/config/       Settings struct from env
-src/controller/   gin handlers, DTOs, middleware
-src/service/      business rules (one per aggregate)
-src/domain/       pure entities + invariants
-src/infra/db/     pgx pool + goose runner
-src/infra/sqlc/   generated queries (do not hand-edit)
-migrations/       goose .sql files
-queries/          sqlc input .sql files
+server/           ponto de entrada (estilo cmd)
+src/config/       struct Settings carregada do env
+src/controller/   handlers gin, DTOs, middleware
+src/service/      regras de negocio (um arquivo por agregado)
+src/domain/       entidades puras + invariantes
+src/infra/db/     pool pgx + runner do goose
+src/infra/sqlc/   queries geradas (NAO editar a mao)
+migrations/       arquivos .sql do goose
+queries/          arquivos .sql de entrada do sqlc
 tests/            integration (testcontainers) + unit
-docs/             HTTP contract (routes.md)
-claude-memory/    cross-cutting context (read first for any non-trivial task)
-bug-fixes-report/ one file per C# bug fixed during the port
+docs/             contrato HTTP (routes.md)
+claude-memory/    contexto transversal (leia antes de qualquer tarefa nao trivial)
+bug-fixes-report/ um arquivo por bug do C# que foi corrigido no port
 ```
 
-Dependency direction: `controller → service → domain` and `service → infra/sqlc`. `domain` imports nothing internal.
+Direcao de dependencia: `controller -> service -> domain` e `service -> infra/sqlc`. `domain` nao importa nada interno.
 
-## Commands
-- `make run` — local dev (needs `.env` + a running Postgres)
+## Comandos
+- `make run` — dev local (precisa de `.env` + Postgres rodando)
 - `make test` — unit + integration
-- `make sqlc` — regenerate query code (after editing `/queries`)
-- `make docker-up` / `make docker-down` — full stack via compose
+- `make sqlc` — regerar codigo das queries (depois de editar `/queries`)
+- `make docker-up` / `make docker-down` — stack completa via compose
 
-## Read before working
-- `claude-memory/README.md` — index
-- `docs/routes.md` — HTTP contract (source of truth)
-- `bug-fixes-report/README.md` — what was broken in C# and how we fixed it
+## Leia antes de trabalhar
+- `claude-memory/README.md` — indice (em ingles, contexto interno)
+- `docs/routes.md` — contrato HTTP (fonte da verdade)
+- `bug-fixes-report/README.md` — o que estava quebrado no C# e como foi corrigido
