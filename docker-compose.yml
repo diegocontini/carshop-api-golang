@@ -1,0 +1,42 @@
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: carshop
+      POSTGRES_PASSWORD: carshop_pw
+      POSTGRES_DB: carshopdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U carshop -d carshopdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      PORT: 8080
+      DATABASE_URL: postgres://carshop:carshop_pw@db:5432/carshopdb?sslmode=disable
+      JWT_SECRET: change-me-to-a-long-random-string-at-least-32-chars
+      JWT_ISSUER: CarShopApi
+      JWT_AUDIENCE: CarShopApiClients
+      JWT_EXPIRY_MIN: "60"
+      SUPERUSER_USERNAME: admin
+      SUPERUSER_PASSWORD: admin
+      SUPERUSER_EMAIL: admin@localhost
+    ports:
+      - "5001:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

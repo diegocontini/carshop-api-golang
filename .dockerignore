@@ -1,0 +1,15 @@
+.git
+.idea
+.vscode
+*.test
+*.out
+coverage.txt
+bin/
+dist/
+.env
+tests/
+docs/
+claude-memory/
+bug-fixes-report/
+CLAUDE.md
+README.md
