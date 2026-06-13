@@ -34,5 +34,14 @@ INSERT INTO car_images (url, car_id) VALUES ($1, $2);
 -- name: UpdateCarImage :exec
 UPDATE car_images SET url = $2 WHERE id = $1 AND car_id = $3;
 
+-- name: BulkUpdateCarImages :exec
+UPDATE car_images
+SET url = data.url
+FROM (SELECT unnest(@ids::bigint[]) AS id, unnest(@urls::text[]) AS url) AS data
+WHERE car_images.id = data.id AND car_images.car_id = @car_id;
+
+-- name: ListCarImageIDsByCarID :many
+SELECT id FROM car_images WHERE car_id = $1;
+
 -- name: DeleteCarImagesByCarID :exec
 DELETE FROM car_images WHERE car_id = $1;

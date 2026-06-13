@@ -16,6 +16,24 @@ type BulkInsertCarImagesParams struct {
 	CarID *int64
 }
 
+const bulkUpdateCarImages = `-- name: BulkUpdateCarImages :exec
+UPDATE car_images
+SET url = data.url
+FROM (SELECT unnest($2::bigint[]) AS id, unnest($3::text[]) AS url) AS data
+WHERE car_images.id = data.id AND car_images.car_id = $1
+`
+
+type BulkUpdateCarImagesParams struct {
+	CarID *int64
+	Ids   []int64
+	Urls  []string
+}
+
+func (q *Queries) BulkUpdateCarImages(ctx context.Context, arg BulkUpdateCarImagesParams) error {
+	_, err := q.db.Exec(ctx, bulkUpdateCarImages, arg.CarID, arg.Ids, arg.Urls)
+	return err
+}
+
 const createCar = `-- name: CreateCar :one
 INSERT INTO cars (new, brand, model, year, price, color, km, description)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -99,6 +117,30 @@ func (q *Queries) GetCar(ctx context.Context, id int64) (Car, error) {
 		&i.Description,
 	)
 	return i, err
+}
+
+const listCarImageIDsByCarID = `-- name: ListCarImageIDsByCarID :many
+SELECT id FROM car_images WHERE car_id = $1
+`
+
+func (q *Queries) ListCarImageIDsByCarID(ctx context.Context, carID *int64) ([]int64, error) {
+	rows, err := q.db.Query(ctx, listCarImageIDsByCarID, carID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []int64{}
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const listCarImagesByCarIDs = `-- name: ListCarImagesByCarIDs :many
