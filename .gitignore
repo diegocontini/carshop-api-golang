@@ -1,0 +1,9 @@
+.env
+*.test
+*.out
+coverage.txt
+/server/server
+/dist
+.idea/
+.vscode/
+.DS_Store

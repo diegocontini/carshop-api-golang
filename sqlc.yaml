@@ -1,0 +1,25 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "queries"
+    schema: "migrations"
+    gen:
+      go:
+        package: "sqlc"
+        out: "src/infra/sqlc"
+        sql_package: "pgx/v5"
+        emit_json_tags: false
+        emit_interface: true
+        emit_empty_slices: true
+        emit_prepared_queries: false
+        emit_pointers_for_null_types: true
+        overrides:
+          - db_type: "pg_catalog.numeric"
+            go_type:
+              import: "github.com/shopspring/decimal"
+              type: "Decimal"
+          - db_type: "pg_catalog.numeric"
+            nullable: true
+            go_type:
+              import: "github.com/shopspring/decimal"
+              type: "NullDecimal"
