@@ -19,6 +19,37 @@ type BulkInsertOrderItemsParams struct {
 	Discount decimal.Decimal
 }
 
+const bulkUpdateOrderItems = `-- name: BulkUpdateOrderItems :exec
+UPDATE order_items
+SET car_id   = data.car_id,
+    price    = data.price,
+    discount = data.discount
+FROM (SELECT unnest($2::bigint[])      AS id,
+             unnest($3::bigint[])  AS car_id,
+             unnest($4::numeric[])  AS price,
+             unnest($5::numeric[]) AS discount) AS data
+WHERE order_items.id = data.id AND order_items.order_id = $1
+`
+
+type BulkUpdateOrderItemsParams struct {
+	OrderID   int64
+	Ids       []int64
+	CarIds    []int64
+	Prices    []decimal.Decimal
+	Discounts []decimal.Decimal
+}
+
+func (q *Queries) BulkUpdateOrderItems(ctx context.Context, arg BulkUpdateOrderItemsParams) error {
+	_, err := q.db.Exec(ctx, bulkUpdateOrderItems,
+		arg.OrderID,
+		arg.Ids,
+		arg.CarIds,
+		arg.Prices,
+		arg.Discounts,
+	)
+	return err
+}
+
 const createOrder = `-- name: CreateOrder :one
 INSERT INTO orders (customer_name, order_date, total, vendor_id)
 VALUES ($1, $2, $3, $4)
@@ -86,6 +117,30 @@ func (q *Queries) GetOrder(ctx context.Context, id int64) (Order, error) {
 		&i.VendorID,
 	)
 	return i, err
+}
+
+const listOrderItemIDsByOrderID = `-- name: ListOrderItemIDsByOrderID :many
+SELECT id FROM order_items WHERE order_id = $1
+`
+
+func (q *Queries) ListOrderItemIDsByOrderID(ctx context.Context, orderID int64) ([]int64, error) {
+	rows, err := q.db.Query(ctx, listOrderItemIDsByOrderID, orderID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []int64{}
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const listOrderItemsByOrderIDs = `-- name: ListOrderItemsByOrderIDs :many

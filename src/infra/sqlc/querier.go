@@ -12,6 +12,7 @@ type Querier interface {
 	BulkInsertCarImages(ctx context.Context, arg []BulkInsertCarImagesParams) (int64, error)
 	BulkInsertOrderItems(ctx context.Context, arg []BulkInsertOrderItemsParams) (int64, error)
 	BulkUpdateCarImages(ctx context.Context, arg BulkUpdateCarImagesParams) error
+	BulkUpdateOrderItems(ctx context.Context, arg BulkUpdateOrderItemsParams) error
 	CreateCar(ctx context.Context, arg CreateCarParams) (Car, error)
 	CreateComission(ctx context.Context, arg CreateComissionParams) (VendorComission, error)
 	CreateOrder(ctx context.Context, arg CreateOrderParams) (Order, error)
@@ -32,6 +33,7 @@ type Querier interface {
 	ListCars(ctx context.Context) ([]Car, error)
 	ListComissions(ctx context.Context) ([]VendorComission, error)
 	ListComissionsByVendor(ctx context.Context, vendorID int64) ([]VendorComission, error)
+	ListOrderItemIDsByOrderID(ctx context.Context, orderID int64) ([]int64, error)
 	ListOrderItemsByOrderIDs(ctx context.Context, dollar_1 []int64) ([]OrderItem, error)
 	ListOrders(ctx context.Context) ([]Order, error)
 	ListOrdersByVendor(ctx context.Context, vendorID int64) ([]Order, error)

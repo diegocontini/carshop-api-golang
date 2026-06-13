@@ -35,5 +35,19 @@ UPDATE order_items
 SET car_id = $2, price = $3, discount = $4
 WHERE id = $1 AND order_id = $5;
 
+-- name: BulkUpdateOrderItems :exec
+UPDATE order_items
+SET car_id   = data.car_id,
+    price    = data.price,
+    discount = data.discount
+FROM (SELECT unnest(@ids::bigint[])      AS id,
+             unnest(@car_ids::bigint[])  AS car_id,
+             unnest(@prices::numeric[])  AS price,
+             unnest(@discounts::numeric[]) AS discount) AS data
+WHERE order_items.id = data.id AND order_items.order_id = @order_id;
+
+-- name: ListOrderItemIDsByOrderID :many
+SELECT id FROM order_items WHERE order_id = $1;
+
 -- name: DeleteOrderItemsByOrderID :exec
 DELETE FROM order_items WHERE order_id = $1;
